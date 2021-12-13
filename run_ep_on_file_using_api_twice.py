@@ -28,7 +28,6 @@ temp_run_dir = '/tmp/blah'
 if os.path.exists(temp_run_dir):
     shutil.rmtree(temp_run_dir)
 os.makedirs(temp_run_dir)
-os.chdir(temp_run_dir)
 weather_file_to_use = '/eplus/epw/miami.epw'
 
 # output_dir_1 = os.path.join(temp_run_dir, 'case1')
@@ -39,7 +38,7 @@ weather_file_to_use = '/eplus/epw/miami.epw'
 # call EnergyPlus twice, report out the status and return the number of failures
 a = EnergyPlusAPI()
 state = a.state_manager.new_state()
-ret1 = a.runtime.run_energyplus(state, ['-w', weather_file_to_use, args.path_to_idf])
+ret1 = a.runtime.run_energyplus(state, ['-d', temp_run_dir, '-w', weather_file_to_use, args.path_to_idf])
 a.state_manager.reset_state(state)
-ret2 = a.runtime.run_energyplus(state, ['-w', weather_file_to_use, args.path_to_idf])
+ret2 = a.runtime.run_energyplus(state, ['-d', temp_run_dir, '-w', weather_file_to_use, args.path_to_idf])
 sys.exit(ret1 + ret2)

@@ -21,32 +21,22 @@ sys.path.insert(0, args.folder_with_pyenergyplus)
 from pyenergyplus.api import EnergyPlusAPI
 
 
-def thread_function(api_instance, weather_file, idf_to_run):
+def thread_function(api_instance, tmp_run_dir, weather_file, idf_to_run):
     print("Thread %s: starting" % threading.get_ident())
     state = api_instance.state_manager.new_state()
-    api_instance.runtime.run_energyplus(state, ['-w', weather_file, idf_to_run])
+    api_instance.runtime.run_energyplus(state, ['-d', tmp_run_dir, '-w', weather_file, idf_to_run])
     print("Thread %s: finishing" % threading.get_ident())
-    api_instance.state_manager.reset_state(state)
 
 
 weather_file_to_use = '/eplus/epw/miami.epw'
 a = EnergyPlusAPI()
 
-# clean out an existing run directory and remake it, moving into that directory as needed
-temp_run_dir = '/tmp/blah1'
-if os.path.exists(temp_run_dir):
-    shutil.rmtree(temp_run_dir)
-os.makedirs(temp_run_dir)
-os.chdir(temp_run_dir)
-t = threading.Thread(target=thread_function, args=(a, weather_file_to_use, args.path_to_idf))
-t.start()
-t.join()
-
-temp_run_dir = '/tmp/blah2'
-if os.path.exists(temp_run_dir):
-    shutil.rmtree(temp_run_dir)
-os.makedirs(temp_run_dir)
-os.chdir(temp_run_dir)
-t = threading.Thread(target=thread_function, args=(a, weather_file_to_use, args.path_to_idf))
-t.start()
-t.join()
+for run_in_dir in ['/tmp/blah1', '/tmp/blah2']:
+    # clean out an existing run directory and remake it, moving into that directory as needed
+    temp_run_dir = '/tmp/blah1'
+    if os.path.exists(run_in_dir):
+        shutil.rmtree(run_in_dir)
+    os.makedirs(run_in_dir)
+    t = threading.Thread(target=thread_function, args=(a, temp_run_dir, weather_file_to_use, args.path_to_idf))
+    t.start()
+    t.join()

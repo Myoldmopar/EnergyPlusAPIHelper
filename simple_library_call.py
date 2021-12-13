@@ -2,9 +2,9 @@ import os
 import shutil
 import sys
 
-ProductsDir = '/eplus/repos/8eplus/builds/r/Products'  # '/eplus/installs/EnergyPlus-9-5-0'
-RepoRoot = '/eplus/repos/8eplus'  # '/eplus/installs/EnergyPlus-9-5-0'
-IDFDir = 'testfiles'  # 'ExampleFiles'
+ProductsDir = '/eplus/installs/EnergyPlus-9-6-0'
+RepoRoot = '/eplus/installs/EnergyPlus-9-6-0'
+IDFDir = 'ExampleFiles'
 
 sys.path.insert(0, str(ProductsDir))
 from pyenergyplus.api import EnergyPlusAPI
@@ -22,7 +22,7 @@ return_value = api.runtime.run_energyplus(
         '-a',
         '-w',
         '/eplus/epw/chicago.epw',
-        os.path.join(RepoRoot, IDFDir, 'PythonPluginCustomSchedule.idf')  # '5ZoneAirCooled.idf')
+        os.path.join(RepoRoot, IDFDir, '5ZoneAirCooled.idf')
     ]
 )
 sys.exit(return_value)

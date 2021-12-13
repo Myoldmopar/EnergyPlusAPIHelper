@@ -1,8 +1,7 @@
 from os import makedirs, path
 from shutil import rmtree
 import sys
-from threading import Thread
-from time import sleep
+import multiprocessing as mp
 
 ProductsDir = '/eplus/installs/EnergyPlus-9-6-0'
 RepoRoot = '/eplus/installs/EnergyPlus-9-6-0'
@@ -12,7 +11,7 @@ sys.path.insert(0, str(ProductsDir))
 from pyenergyplus.api import EnergyPlusAPI
 
 
-def thread_function(_working_dir: str):
+def subprocess_function(_working_dir: str):
     print(f"Thread: Running at working dir: {_working_dir}")
     if path.exists(_working_dir):
         rmtree(_working_dir)
@@ -26,16 +25,16 @@ def thread_function(_working_dir: str):
             '-a',
             '-w',
             '/eplus/epw/chicago.epw',
-            path.join(RepoRoot, IDFDir, '5ZoneAirCooled.idf')
+            path.join(RepoRoot, IDFDir, '1ZoneUncontrolled.idf')
         ]
     )
 
 
-threads = list()
-for index in range(3):
-    working_dir = f"/tmp/test_thread_{index}"
-    print(f"Main    : create and start thread at working directory: {working_dir}.")
-    x = Thread(target=thread_function, args=(working_dir,))
-    threads.append(x)
-    x.start()
-    sleep(0)
+processes = [mp.Process(target=subprocess_function, args=(f"/tmp/test_thread_{x}",)) for x in range(7)]
+
+for p in processes:
+    print(f"Main    : create and start process.")
+    p.start()
+
+for p in processes:
+    p.join()

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import os
 import requests
 import sys
 
@@ -20,7 +21,11 @@ oa_temp_handle = -1
 zone_temp_handle = -1
 count = 0
 plot_update_interval = 250  # time steps
-case_index_to_run = 2
+case_index_to_run = 1
+if len(sys.argv) > 1:
+    case_index_to_run = int(sys.argv[1])
+filename_to_run = ''
+zone_name = ''
 if case_index_to_run == 1:
     filename_to_run = '1ZoneEvapCooler.idf'
     zone_name = 'Main Zone'
@@ -76,7 +81,8 @@ def callback_function(s):
 
 
 # insert the repo build tree or install path into the search Path, then import the EnergyPlus API
-sys.path.insert(0, '/eplus/repos/5eplus/builds/r/Products')
+RepoDir = '/eplus/installs/EnergyPlus-9-6-0'
+sys.path.insert(0, RepoDir)
 from pyenergyplus.api import EnergyPlusAPI
 
 a = EnergyPlusAPI()
@@ -88,7 +94,7 @@ a.runtime.run_energyplus(
         '-a',
         '-w', '/eplus/epw/chicago.epw',
         '-d', 'output',
-        '/eplus/repos/5eplus/testfiles/' + filename_to_run
+        os.path.join(RepoDir, 'ExampleFiles', filename_to_run)
     ]
 )
 

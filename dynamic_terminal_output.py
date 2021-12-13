@@ -1,12 +1,8 @@
 import sys
 import sparkline
 
-# ProductsDir = '/eplus/installs/EnergyPlus-9-5-0'
-# RepoRoot = '/eplus/installs/EnergyPlus-9-5-0'
-# ProductsDir = '/eplus/repos/2eplus/cmake-build-debug/Products'
-# RepoRoot = '/eplus/repos/2eplus/cmake-build-debug/Products'
-ProductsDir = '/eplus/repos/2eplus/builds/r/Products'
-RepoRoot = '/eplus/repos/2eplus/builds/r/Products'
+ProductsDir = '/eplus/installs/EnergyPlus-9-6-0'
+RepoRoot = '/eplus/installs/EnergyPlus-9-6-0'
 outdoor_db_handle = None
 plot_data = []
 counter = 0
@@ -46,9 +42,7 @@ api.runtime.run_energyplus(
         r'/tmp/abc',
         '-w',
         r"/eplus/epw/chicago.epw",
-        # "-D",
         "-a",
-        # r"/eplus/installs/EnergyPlus-9-5-0/ExampleFiles/1ZoneUncontrolled.idf",
-        r"/eplus/installs/EnergyPlus-9-5-0/ExampleFiles/5ZoneAirCooled.idf",
+        r"/eplus/installs/EnergyPlus-9-6-0/ExampleFiles/5ZoneAirCooled.idf",
     ]
 )
