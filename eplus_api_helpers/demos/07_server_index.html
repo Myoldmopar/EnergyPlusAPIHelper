@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EnergyPlus Controller</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        input[type=number]::-webkit-inner-spin-button {opacity: 1}
+    </style>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+    <h1>EnergyPlus Controller</h1>
+    <p>Pretend to be Mother Nature, and take control of a live EnergyPlus simulation</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-5">
+            <div class="card text-center">
+                <h5 class="card-header">Manage Simulation</h5>
+                <div class="card-body">
+                    <button id="start_sim" type="button" class="btn btn-primary">Start Simulation</button>
+                    <button id="get_output" type="button" class="btn btn-primary">Force Update Data</button>
+                    <hr>
+                    <label for="out_temp">Actuate Live Outdoor Temp: </label> <input id="out_temp" type="NUMBER" min="5"
+                                                                                     max="40"
+                                                                                     step="1" value="23" size="6">
+                    <hr>
+                    <!--suppress HtmlFormInputWithoutLabel -->
+                    <textarea id="output" class="scrollabletextbox"
+                              style="height:230px;width:100%;font-size:75%;overflow:scroll">(EnergyPlus Output Here)</textarea>
+                    <div class="progress">
+                        <div id="progress" class="progress-bar" role="progressbar" style="width:0"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-7">
+            <div class="card text-center">
+                <h5 class="card-header">Simulation Results</h5>
+                <div class="card-body">
+                    <canvas id="myChart" width="400" height="260"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
+
+<script>
+
+    let simRunning = false;
+    let simInterval = null;
+
+    function startSimulation() {
+        setTemp();
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/start/", true);
+        xhr.send();
+        simRunning = true;
+        document.getElementById("start_sim").disabled = true;
+        simInterval = setInterval(updateData, 500);
+    }
+
+    function setTemp() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/outdoor_temp/", true);
+        xhr.setRequestHeader("Content-Type", "application/json")
+        const body = JSON.stringify({"temperature": document.getElementById("out_temp").value})
+        xhr.send(body);
+    }
+
+    function updateData() {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                const response_object = JSON.parse(xhr.response)
+                let outputBox = document.getElementById("output");
+                outputBox.innerHTML = response_object.output;
+                outputBox.scrollTop = outputBox.scrollHeight;
+                document.getElementById("progress").style.width = response_object.progress.toString() + '%';
+                if (response_object.progress > 99) {
+                    clearInterval(simInterval)
+                    document.getElementById("start_sim").disabled = false;
+                }
+                myLineChart.data.datasets[0].data = response_object["outdoor_data"];
+                myLineChart.data.datasets[1].data = response_object["zone_temp_data"];
+                myLineChart.update();
+            }
+        }
+        xhr.open("GET", "/api/data/", true);
+        xhr.send();
+    }
+
+    const canvas = document.getElementById('myChart');
+
+    let data = {
+        datasets: [
+            {
+                label: "Outdoor Temperature",
+                fill: false,
+                lineTension: 0.0,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,0.4)",
+                pointRadius: 0,
+                data: []
+            },
+            {
+                label: "Zone Temperature",
+                fill: false,
+                lineTension: 0.0,
+                backgroundColor: "rgba(213,79,0,0.4)",
+                borderColor: "rgba(213,79,0,0.4)",
+                pointRadius: 0,
+                data: []
+            }
+        ]
+    };
+
+    let myLineChart = new Chart.Scatter(canvas, {type: 'scatter', data: data});
+
+    document.getElementById("out_temp").addEventListener('input', setTemp);
+    document.getElementById("start_sim").addEventListener('click', startSimulation);
+    document.getElementById("get_output").addEventListener('click', updateData);
+
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,9 +1,9 @@
-import os
-import sys
+from pathlib import Path
+from eplus_api_helpers.import_helper import EPlusAPIHelper
 
-RepoDir = '/eplus/installs/EnergyPlus-9-6-0'
-sys.path.insert(0, RepoDir)
-from pyenergyplus.api import EnergyPlusAPI
+
+e = EPlusAPIHelper(Path('/eplus/installs/EnergyPlus-22-2-0'))
+api = e.get_api_instance()
 
 
 def progress_update(percent):
@@ -12,12 +12,20 @@ def progress_update(percent):
     print(f'\rProgress: |{bar}| {percent}%', end="\r")
 
 
-api = EnergyPlusAPI()
 state = api.state_manager.new_state()
 api.runtime.set_console_output_status(state, False)
 api.runtime.callback_progress(state, progress_update)
-idf_path = os.path.join(RepoDir, 'ExampleFiles', '5ZoneAirCooled.idf')
-result = api.runtime.run_energyplus(state, ['-d', 'output', '-w', '/eplus/epw/chicago.epw', "-a", idf_path])
+result = api.runtime.run_energyplus(
+    state,
+    [
+        '-d',
+        e.get_temp_run_dir(),
+        '-w',
+        e.weather_file_path(),
+        "-a",
+        e.path_to_test_file('5ZoneAirCooled.idf')
+    ]
+)
 if result == 0:
     print("Success, finished")
 else:

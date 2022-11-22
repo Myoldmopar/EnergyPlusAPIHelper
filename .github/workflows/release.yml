@@ -1,0 +1,32 @@
+name: PyPIRelease
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8  # v2
+
+    - name: Set up Python
+      uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5  # v4.2.0
+      with:
+        python-version: 3.8
+
+    - name: Install Pip Dependencies
+      shell: bash
+      run: pip install -r requirements.txt
+
+    - name: Build the Wheel
+      shell: bash
+      run: rm -rf dist/ build/ && python3 setup.py bdist_wheel sdist
+
+    - name: Deploy on Test PyPi
+      uses: pypa/gh-action-pypi-publish@37f50c210e3d2f9450da2cd423303d6a14a6e29f  # v1.5.1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPIPW }}
