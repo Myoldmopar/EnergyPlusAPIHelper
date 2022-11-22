@@ -6,7 +6,7 @@ readme_contents = readme_file.read_text()
 
 setup(
     name="energyplus_api_helpers",
-    version="0.1",
+    version="0.2",
     packages=['eplus_api_helpers', 'eplus_api_helpers.demos'],
     description="A set of helper classes, functions and demos, for interacting with the EnergyPlus Python API",
     package_data={"eplus_api_helpers.demos": ["*.html"]},
