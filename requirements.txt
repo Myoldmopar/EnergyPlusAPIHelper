@@ -2,3 +2,4 @@ matplotlib
 pysparklines
 asciichartpy
 flask
+wheel
