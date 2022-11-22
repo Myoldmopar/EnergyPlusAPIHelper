@@ -26,7 +26,7 @@ def subprocess_function():
 processes = [mp.Process(target=subprocess_function) for x in range(7)]
 
 for p in processes:
-    print(f"Main    : create and start process.")
+    print("Main    : create and start process.")
     p.start()
 
 for p in processes:
