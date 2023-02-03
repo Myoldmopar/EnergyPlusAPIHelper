@@ -112,3 +112,7 @@ def thread_function():
             e.path_to_test_file('1ZoneUncontrolled.idf')
         ]
     )
+
+
+if __name__ == "__main__":
+    app.run()
