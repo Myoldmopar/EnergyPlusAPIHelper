@@ -3,10 +3,10 @@ import multiprocessing as mp
 from sys import argv
 from eplus_api_helpers.import_helper import EPlusAPIHelper
 
-
 eplus_path = '/eplus/installs/EnergyPlus-22-2-0'
 if len(argv) > 1:
     eplus_path = argv[1]
+
 
 def subprocess_function():
     working_dir = e.get_temp_run_dir()

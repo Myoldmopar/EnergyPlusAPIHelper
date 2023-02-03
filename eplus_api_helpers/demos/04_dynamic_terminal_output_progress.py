@@ -2,17 +2,15 @@ from pathlib import Path
 from sys import argv
 from eplus_api_helpers.import_helper import EPlusAPIHelper
 
-
 eplus_path = '/eplus/installs/EnergyPlus-22-2-0'
 if len(argv) > 1:
     eplus_path = argv[1]
 
 
 def progress_update(percent):
-    filled_length = int(80 * (percent/100.0))
+    filled_length = int(80 * (percent / 100.0))
     bar = "*" * filled_length + '-' * (80 - filled_length)
     print(f'\rProgress: |{bar}| {percent}%', end="\r")
-
 
 
 e = EPlusAPIHelper(Path(eplus_path))
