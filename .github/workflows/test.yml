@@ -36,7 +36,7 @@ jobs:
       - name: Download EnergyPlus
         uses: wei/wget@v1
         with:
-          args: https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/${{ matrix.file_base_name }}${{ matrix.file_extension }} -O energyplus${{ matrix.file_extension }}
+          args: "https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/${{ matrix.file_base_name }}${{ matrix.file_extension }}" -O "energyplus${{ matrix.file_extension }}"
       - name: Extract EnergyPlus
         run: ${{ matrix.extract_command }} "energyplus${{ matrix.file_extension }}"
       - name: Run Example Script
