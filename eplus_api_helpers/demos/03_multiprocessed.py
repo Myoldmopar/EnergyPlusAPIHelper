@@ -1,7 +1,12 @@
 from pathlib import Path
 import multiprocessing as mp
+from sys import argv
 from eplus_api_helpers.import_helper import EPlusAPIHelper
 
+
+eplus_path = '/eplus/installs/EnergyPlus-22-2-0'
+if len(argv) > 1:
+    eplus_path = argv[1]
 
 def subprocess_function():
     working_dir = e.get_temp_run_dir()
@@ -21,7 +26,7 @@ def subprocess_function():
 
 # for multiprocessing on Windows, need to protect the re-entrance to the file with a __name__ == "__main__" check
 if __name__ == "__main__":
-    e = EPlusAPIHelper(Path('/eplus/installs/EnergyPlus-22-2-0'))
+    e = EPlusAPIHelper(Path(eplus_path))
     api = e.get_api_instance()
     processes = [mp.Process(target=subprocess_function) for x in range(7)]
     # create the processes

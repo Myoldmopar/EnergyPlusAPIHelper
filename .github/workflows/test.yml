@@ -43,5 +43,9 @@ jobs:
         run: ${{ matrix.extract_command }} "energyplus${{ matrix.file_extension }}"
       - name: Run Example Script 01
         run: python ./eplus_api_helpers/demos/01_simple_library_call.py "./${{ matrix.file_base_name }}"
-      - name: Run Example Script 02
-        run: python ./eplus_api_helpers/demos/02_threaded.py "./${{ matrix.file_base_name }}"
+#      - name: Run Example Script 02
+#        run: python ./eplus_api_helpers/demos/02_threaded.py "./${{ matrix.file_base_name }}"
+      - name: Run Example Script 03
+        run: python ./eplus_api_helpers/demos/03_multiprocessed.py "./${{ matrix.file_base_name }}"
+      - name: Run Example Script 04
+        run: python ./eplus_api_helpers/demos/04_dynamic_terminal_output_progress.py "./${{ matrix.file_base_name }}"
