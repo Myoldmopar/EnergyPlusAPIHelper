@@ -6,22 +6,26 @@ env:
   PYTHONPATH: '.'
 
 jobs:
-  download_and_test:
-    runs-on: ubuntu-22.04
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            file_base_name: EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu20.04-x86_64
+            file_extension: .tar.gz
+          - os: ubuntu-22.04
+            file_base_name: EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu22.04-x86_64
+            file_extension: .tar.gz
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8  # v2
       - name: Set up Python 3.8
         uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5  # v4.2.0
         with:
           python-version: 3.8
-#      - uses: suisei-cn/actions-download-file@v1.3.0
-#        name: Download EnergyPlus
-#        with:
-#          url: "https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu22.04-x86_64.tar.gz"
-#          target: energyplus/
       - name: Download EnergyPlus
-        run: wget https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu22.04-x86_64.tar.gz -O energyplus.tar.gz
+        run: wget "https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/${{ matrix.file_base_name }}${{ matrix.file_extension }}" -O "energyplus${{ matrix.file_extension }}"
       - name: Extract EnergyPlus
         run: tar -xvf energyplus.tar.gz
       - name: Run Example Script
-        run: python ./eplus_api_helpers/demos/01_simple_library_call.py ./EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu22.04-x86_64
+        run: python ./eplus_api_helpers/demos/01_simple_library_call.py "./${{ matrix.file_base_name }}"
