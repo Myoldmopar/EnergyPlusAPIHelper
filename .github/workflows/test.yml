@@ -26,10 +26,10 @@ jobs:
             extract_command: "tar -xf"
             wget: "wget"
           - os: windows-2022
-            file_base_name: "EnergyPlus-22.2.0-c249759bad-Windows-x86_64.zip"
+            file_base_name: "EnergyPlus-22.2.0-c249759bad-Windows-x86_64"
             file_extension: ".zip"
             extract_command: "7z x"
-            wget: "/C/msys64/usr/bin/wget.exe -q"
+            wget: "/C/msys64/usr/bin/wget.exe"  # -q
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8  # v2
