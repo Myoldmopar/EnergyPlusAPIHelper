@@ -1,4 +1,4 @@
-name: Flake8
+name: Test
 
 on: [ push ]
 
@@ -24,5 +24,4 @@ jobs:
       - name: Extract EnergyPlus
         run: tar -xvf energyplus.tar.gz
       - name: Run Example Script
-        env:
         run: python ./eplus_api_helpers/demos/01_simple_library_call.py ./EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu22.04-x86_64
