@@ -14,22 +14,18 @@ jobs:
             file_base_name: "EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu20.04-x86_64"
             file_extension: ".tar.gz"
             extract_command: "tar -xf"
-            wget: "wget"
           - os: ubuntu-22.04
             file_base_name: "EnergyPlus-22.2.0-c249759bad-Linux-Ubuntu22.04-x86_64"
             file_extension: ".tar.gz"
             extract_command: "tar -xf"
-            wget: "wget"
           - os: macos-12
             file_base_name: "EnergyPlus-22.2.0-c249759bad-Darwin-macOS12.1-x86_64"
             file_extension: ".tar.gz"
             extract_command: "tar -xf"
-            wget: "wget"
           - os: windows-2022
             file_base_name: "EnergyPlus-22.2.0-c249759bad-Windows-x86_64"
             file_extension: ".zip"
             extract_command: "7z x"
-            wget: "/C/msys64/usr/bin/wget.exe"  # -q
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8  # v2
@@ -38,11 +34,10 @@ jobs:
         with:
           python-version: 3.8
       - name: Download EnergyPlus
-        shell: bash
-        run: ${{ matrix.wget }} "https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/${{ matrix.file_base_name }}${{ matrix.file_extension }}" -O "energyplus${{ matrix.file_extension }}"
+        uses: wei/wget@v1
+        with:
+          args: "https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/${{ matrix.file_base_name }}${{ matrix.file_extension }}" -O "energyplus${{ matrix.file_extension }}"
       - name: Extract EnergyPlus
-        shell: bash
         run: ${{ matrix.extract_command }} "energyplus${{ matrix.file_extension }}"
       - name: Run Example Script
-        shell: bash
         run: python ./eplus_api_helpers/demos/01_simple_library_call.py "./${{ matrix.file_base_name }}"
