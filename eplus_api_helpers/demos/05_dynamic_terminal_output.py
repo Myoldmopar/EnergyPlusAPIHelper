@@ -1,15 +1,16 @@
 import sys
-import sparkline
 from pathlib import Path
+from sys import argv
+import sparkline
 from eplus_api_helpers.import_helper import EPlusAPIHelper
 
 outdoor_db_handle = None
 plot_data = []
 counter = 0
 
-
-e = EPlusAPIHelper(Path('/eplus/installs/EnergyPlus-22-2-0'))
-api = e.get_api_instance()
+eplus_path = '/eplus/installs/EnergyPlus-22-2-0'
+if len(argv) > 1:
+    eplus_path = argv[1]
 
 
 def callback_function(s):
@@ -35,6 +36,8 @@ def callback_function(s):
         sys.stdout.flush()
 
 
+e = EPlusAPIHelper(Path(eplus_path))
+api = e.get_api_instance()
 state = api.state_manager.new_state()
 api.runtime.set_console_output_status(state, False)
 api.runtime.callback_begin_zone_timestep_before_init_heat_balance(state, callback_function)
