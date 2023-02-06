@@ -37,6 +37,8 @@ jobs:
         uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5  # v4.2.0
         with:
           python-version: 3.8
+      - name: Install Python Dependencies
+        run: pip install pysparklines
       - name: Download EnergyPlus
         run: ${{ matrix.wget }} "https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/${{ matrix.file_base_name }}${{ matrix.file_extension }}" -O "energyplus${{ matrix.file_extension }}"
       - name: Extract EnergyPlus
