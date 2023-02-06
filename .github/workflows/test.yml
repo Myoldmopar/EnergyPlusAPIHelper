@@ -49,3 +49,5 @@ jobs:
         run: python ./eplus_api_helpers/demos/03_multiprocessed.py "./${{ matrix.file_base_name }}"
       - name: Run Example Script 04
         run: python ./eplus_api_helpers/demos/04_dynamic_terminal_output_progress.py "./${{ matrix.file_base_name }}"
+      - name: Run Example Script 05
+        run: python ./eplus_api_helpers/demos/05_dynamic_terminal_output.py "./${{ matrix.file_base_name }}"
