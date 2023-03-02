@@ -2,13 +2,13 @@
 
 This project is a small library of helper functionality and, more importantly, demo scripts, for interacting with the EnergyPlus API.
 The EnergyPlus Python API is not on PyPi (as of now), it simply comes with the EnergyPlus installation.
-This library makes that process a bit easier, and also offers a set of demos in the `eplus_api_helpers/demos` folder.
+This library makes that process a bit easier, and also offers a set of demos in the `energyplus_api_helpers/demos` folder.
 
 A super minimal example using the helper class here:
 
 ```python
 from pathlib import Path
-from eplus_api_helpers.import_helper import EPlusAPIHelper
+from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 helper = EPlusAPIHelper(Path('/path/to/EnergyPlus-22-2-0'))
 api = helper.get_api_instance()

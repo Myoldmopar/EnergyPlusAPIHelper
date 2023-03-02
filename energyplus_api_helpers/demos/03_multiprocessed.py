@@ -1,7 +1,7 @@
 from pathlib import Path
 import multiprocessing as mp
 from sys import argv
-from eplus_api_helpers.import_helper import EPlusAPIHelper
+from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 eplus_path = '/eplus/installs/EnergyPlus-22-2-0'
 if len(argv) > 1:

@@ -2,7 +2,7 @@ from flask import Flask
 from pathlib import Path
 from threading import Thread
 from time import sleep
-from eplus_api_helpers.import_helper import EPlusAPIHelper
+from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 
 class RunConfig:

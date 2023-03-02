@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 from sys import argv
 import sparkline
-from eplus_api_helpers.import_helper import EPlusAPIHelper
+from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 outdoor_db_handle = None
 plot_data = []
