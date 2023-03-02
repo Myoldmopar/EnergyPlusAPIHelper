@@ -12,7 +12,7 @@ class _EPlusImporter:
     This class should be used as::
 
         from pathlib import Path
-        from eplus_api_helpers import EPlusImporter
+        from energyplus_api_helpers import EPlusImporter
         p = Path('/path/to/energyplus/install')
         with _EplusImporter() as eplus_helper:
             from pyenergyplus.api import EnergyPlusAPI

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from pathlib import Path
-from eplus_api_helpers.import_helper import EPlusAPIHelper
+from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 
 class PlotManager:
