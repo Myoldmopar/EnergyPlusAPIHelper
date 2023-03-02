@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EnergyPlus Controller</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        input[type=number]::-webkit-inner-spin-button {
+            opacity: 1
+        }
+    </style>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+    <h1>EnergyPlus Visualizer</h1>
+    <p>Monitor a live EnergyPlus simulation</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-5">
+            <div class="card text-center">
+                <h5 class="card-header">Manage Simulation</h5>
+                <div class="card-body">
+                    <button id="start_sim" type="button" class="btn btn-primary">Start Simulation</button>
+                    <button id="get_output" type="button" class="btn btn-primary">Force Update Data</button>
+                    <hr>
+                    <!--suppress HtmlFormInputWithoutLabel -->
+                    <textarea id="output" class="scrollabletextbox"
+                              style="height:230px;width:100%;font-size:75%;overflow:scroll">(EnergyPlus Output Here)</textarea>
+                    <div class="progress">
+                        <div id="progress" class="progress-bar" role="progressbar" style="width:0"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-7">
+            <div class="card text-center">
+                <h5 class="card-header">Simulation Results</h5>
+                <div class="card-body">
+                    <canvas id="myChart" width="400" height="260"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h5 class="card-header">Dynamic Zone Temperatures</h5>
+            <div class="card-body">
+                <canvas id="floor_plan" style="width:100%;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
+
+<script>
+
+    let simRunning = false;
+    let simInterval = null;
+
+    function startSimulation() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/start/", true);
+        xhr.send();
+        simRunning = true;
+        document.getElementById("start_sim").disabled = true;
+        simInterval = setInterval(updateData, 500);
+    }
+
+    function rgbFromTemperature(zone_temp) {
+        const max_temp = 24, min_temp = 20;
+        zone_temp = zone_temp < min_temp ? min_temp : zone_temp;
+        zone_temp = zone_temp > max_temp ? max_temp : zone_temp;
+        const ratio = (zone_temp - min_temp) / (max_temp - min_temp);
+        const red_val = ratio * 255;
+        const blue_val = 255 - red_val;
+        return `rgb(${red_val},0,${blue_val})`
+    }
+
+    function drawZone(ctx, vertices, zoneTemp) {
+        const scale = 30;
+        const offset = 10;
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(vertices[0][0] * scale + offset, vertices[0][1] * scale + offset);
+        // console.log(`moving to: ${vertices[0][0] * scale + offset}, ${vertices[0][1] * scale + offset}`);
+        // ctx.lineTo(vertices[1][0] * scale + offset, vertices[1][1] * scale + offset);
+        // console.log(`line to: ${vertices[1][0] * scale + offset}, ${vertices[1][1] * scale + offset}`);
+        // ctx.lineTo(vertices[2][0] * scale + offset, vertices[2][1] * scale + offset);
+        // console.log(`line to: ${vertices[2][0] * scale + offset}, ${vertices[2][1] * scale + offset}`);
+        // ctx.lineTo(vertices[3][0] * scale + offset, vertices[3][1] * scale + offset);
+        // console.log(`line to: ${vertices[3][0] * scale + offset}, ${vertices[3][1] * scale + offset}`);
+        vertices.forEach(function (v, i) {
+            if (i) ctx.lineTo(v[0] * scale + offset, v[1] * scale + offset);  // skip the starting vertex, we already moved there
+        })
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fillStyle = rgbFromTemperature(zoneTemp);
+        ctx.fill();
+    }
+
+    function updateData() {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                const response_object = JSON.parse(xhr.response)
+
+                // update status message from E+
+                let outputBox = document.getElementById("output");
+                outputBox.innerHTML = response_object.output;
+                outputBox.scrollTop = outputBox.scrollHeight;
+
+                // update progress bar
+                document.getElementById("progress").style.width = response_object.progress.toString() + '%';
+                if (response_object.progress > 99) {
+                    clearInterval(simInterval)
+                    document.getElementById("start_sim").disabled = false;
+                }
+
+                // update outdoor temp chart
+                myLineChart.data.datasets[0].data = response_object["outdoor_data"];
+                myLineChart.update();
+
+                // rebuild the SVG floor plan diagram
+                const floor_plan = document.getElementById('floor_plan');
+                let ctx = floor_plan.getContext('2d');
+
+                // draw zones, noting that y goes from top down
+                const northVertices = [[0, 0], [1, 1], [4, 1], [5, 0]]
+                drawZone(ctx, northVertices, response_object.zone_temp_data.north);
+                let southVertices = [[0, 3], [5, 3], [4, 2], [1, 2]];
+                drawZone(ctx, southVertices, response_object.zone_temp_data.south);
+                let eastVertices = [[5, 0], [4, 1], [4, 2], [5, 3]];
+                drawZone(ctx, eastVertices, response_object.zone_temp_data.east);
+                let westVertices = [[0, 0], [0, 3], [1, 2], [1, 1]];
+                drawZone(ctx, westVertices, response_object.zone_temp_data.west);
+                let centerVertices = [[1, 1], [1, 2], [4, 2], [4, 1]];
+                drawZone(ctx, centerVertices, response_object.zone_temp_data.center);
+            }
+        }
+        xhr.open("GET", "/api/data/", true);
+        xhr.send();
+    }
+
+    // do a one-time setup of the plot
+    const canvas = document.getElementById('myChart');
+    let data = {
+        datasets: [
+            {
+                label: "Outdoor Temperature",
+                fill: false,
+                lineTension: 0.0,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,0.4)",
+                pointRadius: 0,
+                data: []
+            }
+        ]
+    };
+    let myLineChart = new Chart.Scatter(canvas, {type: 'scatter', data: data});
+
+    // set up handlers for button presses
+    document.getElementById("start_sim").addEventListener('click', startSimulation);
+    document.getElementById("get_output").addEventListener('click', updateData);
+
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+</body>
+</html>
