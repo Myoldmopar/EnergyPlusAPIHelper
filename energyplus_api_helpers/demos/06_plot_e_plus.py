@@ -25,7 +25,7 @@ class PlotManager:
         self.ax.relim()
         self.ax.autoscale_view()
         plt.draw()
-        plt.pause(0.00001)
+        plt.pause(0.000001)
 
 
 class EnergyPlusManager:
