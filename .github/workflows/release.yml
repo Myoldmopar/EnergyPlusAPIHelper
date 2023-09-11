@@ -2,6 +2,7 @@ name: PyPIRelease
 
 on:
   push:
+    branches: [ main ]
     tags:
       - '*'
 
@@ -19,14 +20,15 @@ jobs:
 
     - name: Install Pip Dependencies
       shell: bash
-      run: pip install -e .[dev]
+      run: pip install --upgrade build
 
     - name: Build the Wheel
       shell: bash
       run: rm -rf dist/ build/ && python3 -m build
 
     - name: Deploy on Test PyPi
-      uses: pypa/gh-action-pypi-publish@37f50c210e3d2f9450da2cd423303d6a14a6e29f  # v1.5.1
+      if: contains(github.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.PYPIPW }}
