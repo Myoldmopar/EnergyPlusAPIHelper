@@ -1,5 +1,5 @@
 import sys
-from typing import Optional
+from typing import List, Optional
 
 import sparkline
 
@@ -7,7 +7,7 @@ from energyplus_api_helpers.demos.helper import get_eplus_path_from_argv1
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 outdoor_db_handle: Optional[int] = None
-plot_data: list[float] = []
+plot_data: List[float] = []
 counter = 0
 
 

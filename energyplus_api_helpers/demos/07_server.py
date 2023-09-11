@@ -1,6 +1,7 @@
 from pathlib import Path
 from threading import Thread
 from time import sleep
+from typing import Dict, List
 
 from flask import Flask, request
 
@@ -20,8 +21,8 @@ oa_temp_actuator = -1
 oa_temp_handle = -1
 zone_temp_handle = -1
 count = 0
-outdoor_data: list[dict[str, float]] = []
-zone_temp_data: list[dict[str, float]] = []
+outdoor_data: List[Dict[str, float]] = []
+zone_temp_data: List[Dict[str, float]] = []
 
 
 @app.route("/", methods=["GET"])
