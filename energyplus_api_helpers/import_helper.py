@@ -1,6 +1,37 @@
+import platform
+import shutil
 import sys
 from pathlib import Path
 from tempfile import mkdtemp
+from typing import Optional
+
+
+def _infer_energyplus_install_dir():
+    """Try to locate the EnergyPlus installation path.
+
+    Starts by looking at `which energyplus` first then tries the default installation paths.
+    Returns the most recent version found"""
+    if ep := shutil.which("energyplus"):
+        return Path(ep).resolve().parent
+    ext = ""
+    if platform.system() == 'Linux':
+        base_dir = Path('/usr/local')
+    elif platform.system() == 'Darwin':
+        base_dir = Path('Applications')
+    else:
+        base_dir = Path('C:/')
+        ext = ".exe"
+    if not base_dir.is_dir():
+        raise ValueError(f"{base_dir=} is not a directory")
+    candidates = [p.parent for p in base_dir.glob(f"EnergyPlus*/energyplus{ext}")]
+    if not candidates:
+        raise ValueError(f"Found zero EnergyPlus installation directories")
+    candidates = [c for c in candidates if (c / 'pyenergyplus').is_dir()]
+    if not candidates:
+        raise ValueError(f"Found zero EnergyPlus installation directories that have the pyenergyplus directory")
+    # Sort by version
+    candidates.sort(key=lambda c: [int(x) for x in c.name.split('-')[1:]])
+    return candidates[-1]
 
 
 class _EPlusImporter:
@@ -39,8 +70,14 @@ class EPlusAPIHelper:
     This class intentionally provides strings as path outputs to keep the conversion to strings reduced in the client
     """
 
-    def __init__(self, eplus_install_path: Path):
-        self.eplus_install_path = eplus_install_path
+    def __init__(self, eplus_install_path: Optional[Path] = None):
+        if eplus_install_path is None:
+            self.eplus_install_path = _infer_energyplus_install_dir()
+            print(f"Infered Location of EnergyPlus installation at {self.eplus_install_path}")
+        else:
+            if not (self.eplus_install_path / 'pyenergyplus').is_dir():
+                raise ValueError(f"Wrong eplus_install_path, '{eplus_install_path}/pyenergyplus' does not exist")
+            self.eplus_install_path = eplus_install_path
 
     def get_api_instance(self):
         with _EPlusImporter(self.eplus_install_path):
