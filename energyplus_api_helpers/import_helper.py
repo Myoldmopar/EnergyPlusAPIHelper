@@ -25,10 +25,10 @@ def _infer_energyplus_install_dir():
         raise ValueError(f"{base_dir=} is not a directory")
     candidates = [p.parent for p in base_dir.glob(f"EnergyPlus*/energyplus{ext}")]
     if not candidates:
-        raise ValueError(f"Found zero EnergyPlus installation directories")
+        raise ValueError("Found zero EnergyPlus installation directories")
     candidates = [c for c in candidates if (c / 'pyenergyplus').is_dir()]
     if not candidates:
-        raise ValueError(f"Found zero EnergyPlus installation directories that have the pyenergyplus directory")
+        raise ValueError("Found zero EnergyPlus installation directories that have the pyenergyplus directory")
     # Sort by version
     candidates.sort(key=lambda c: [int(x) for x in c.name.split('-')[1:]])
     return candidates[-1]
