@@ -32,24 +32,34 @@ jobs:
             wget: 'C:\msys64\usr\bin\wget.exe'  # -q  GitHub actions can't find wget at this location
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8  # v2
+
+      - uses: actions/checkout@v4
+
       - name: Set up Python 3.8
-        uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435  # v4.5.0
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
+
       - name: Install Python Dependencies
-        run: pip install pysparklines
+        run: pip install -e .
+
       - name: Download EnergyPlus
         run: ${{ matrix.wget }} "https://github.com/NREL/EnergyPlus/releases/download/v22.2.0/${{ matrix.file_base_name }}${{ matrix.file_extension }}" -O "energyplus${{ matrix.file_extension }}"
+
       - name: Extract EnergyPlus
         run: ${{ matrix.extract_command }} "energyplus${{ matrix.file_extension }}"
+
       - name: Run Example Script 01
         run: python ./energyplus_api_helpers/demos/01_simple_library_call.py "./${{ matrix.file_base_name }}"
+
 #      - name: Run Example Script 02
 #        run: python ./energyplus_api_helpers/demos/02_threaded.py "./${{ matrix.file_base_name }}"
+#
       - name: Run Example Script 03
         run: python ./energyplus_api_helpers/demos/03_multiprocessed.py "./${{ matrix.file_base_name }}"
+
       - name: Run Example Script 04
         run: python ./energyplus_api_helpers/demos/04_dynamic_terminal_output_progress.py "./${{ matrix.file_base_name }}"
+
       - name: Run Example Script 05
         run: python ./energyplus_api_helpers/demos/05_dynamic_terminal_output.py "./${{ matrix.file_base_name }}"

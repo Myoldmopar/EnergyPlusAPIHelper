@@ -1,17 +1,18 @@
 import matplotlib.pyplot as plt
-from pathlib import Path
+
+from energyplus_api_helpers.demos.helper import get_eplus_path_from_argv1
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 
 class PlotManager:
     def __init__(self):
-        self.hl, = plt.plot([], [], label="Outdoor Air Temp")
-        self.h2, = plt.plot([], [], label="Zone Temperature")
+        (self.hl,) = plt.plot([], [], label="Outdoor Air Temp")
+        (self.h2,) = plt.plot([], [], label="Zone Temperature")
         self.ax = plt.gca()
-        plt.title('Outdoor Temperature')
-        plt.xlabel('Zone time step index')
-        plt.ylabel('Temperature [C]')
-        plt.legend(loc='lower right')
+        plt.title("Outdoor Temperature")
+        plt.xlabel("Zone time step index")
+        plt.ylabel("Temperature [C]")
+        plt.legend(loc="lower right")
         self.x = []
         self.y_outdoor = []
         self.y_zone = []
@@ -30,7 +31,7 @@ class PlotManager:
 
 class EnergyPlusManager:
     def __init__(self):
-        self.e = EPlusAPIHelper(Path('/eplus/installs/EnergyPlus-22-2-0'))
+        self.e = EPlusAPIHelper(get_eplus_path_from_argv1())
         self.api = self.e.get_api_instance()
         self.got_handles = False
         self.oa_temp_handle = -1
@@ -43,10 +44,10 @@ class EnergyPlusManager:
             if not self.api.exchange.api_data_fully_ready(state):
                 return
             self.oa_temp_handle = self.api.exchange.get_variable_handle(
-                state, u"SITE OUTDOOR AIR DRYBULB TEMPERATURE", u"ENVIRONMENT"
+                state, "SITE OUTDOOR AIR DRYBULB TEMPERATURE", "ENVIRONMENT"
             )
             self.zone_temp_handle = self.api.exchange.get_variable_handle(
-                state, "Zone Mean Air Temperature", 'Main Zone'
+                state, "Zone Mean Air Temperature", "Main Zone"
             )
             if -1 in [self.oa_temp_handle, self.zone_temp_handle]:
                 print("***Invalid handles, check spelling and sensor/actuator availability")
@@ -66,12 +67,16 @@ class EnergyPlusManager:
     def run(self):
         state = self.api.state_manager.new_state()
         self.api.runtime.callback_begin_zone_timestep_after_init_heat_balance(state, self.callback_function)
-        self.api.runtime.run_energyplus(state, [
-                '-a',
-                '-w', self.e.weather_file_path(),
-                '-d', self.e.get_temp_run_dir(),
-                self.e.path_to_test_file('1ZoneEvapCooler.idf')
-            ]
+        self.api.runtime.run_energyplus(
+            state,
+            [
+                "-a",
+                "-w",
+                self.e.weather_file_path(),
+                "-d",
+                self.e.get_temp_run_dir(),
+                self.e.path_to_test_file("1ZoneEvapCooler.idf"),
+            ],
         )
 
 
