@@ -17,7 +17,7 @@ def _infer_energyplus_install_dir():
     if platform.system() == 'Linux':
         base_dir = Path('/usr/local')
     elif platform.system() == 'Darwin':
-        base_dir = Path('Applications')
+        base_dir = Path('/Applications')
     else:
         base_dir = Path('C:/')
         ext = ".exe"
