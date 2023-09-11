@@ -3,7 +3,7 @@ name: Lint
 on: [push]
 
 jobs:
-  flake8:
+  lint:
     runs-on: ubuntu-20.04
 
     steps:
