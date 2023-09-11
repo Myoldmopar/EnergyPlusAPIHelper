@@ -47,7 +47,7 @@ source = "https://github.com/Myoldmopar/EnergyPlusAPIHelper"
 tracker = "https://github.com/Myoldmopar/EnergyPlusAPIHelper/issues"
 
 [project.optional-dependencies]
-dev = ["black", "isort", "mypy", "wheel"]
+dev = ["black", "isort", "mypy", "wheel", "pre-commit"]
 
 [tool.black]
 line-length = 120
