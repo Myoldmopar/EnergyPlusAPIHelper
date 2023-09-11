@@ -1,19 +1,14 @@
 import sys
-from pathlib import Path
-from sys import argv
 from typing import Optional
 
 import sparkline
 
+from energyplus_api_helpers.demos.helper import get_eplus_path_from_argv1
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 outdoor_db_handle: Optional[int] = None
 plot_data: list[float] = []
 counter = 0
-
-eplus_path = "/eplus/installs/EnergyPlus-22-2-0"
-if len(argv) > 1:
-    eplus_path = argv[1]
 
 
 def callback_function(s):
@@ -37,7 +32,7 @@ def callback_function(s):
         sys.stdout.flush()
 
 
-e = EPlusAPIHelper(Path(eplus_path))
+e = EPlusAPIHelper(get_eplus_path_from_argv1())
 api = e.get_api_instance()
 state = api.state_manager.new_state()
 api.runtime.set_console_output_status(state, False)

@@ -1,12 +1,7 @@
-from pathlib import Path
-from sys import argv
 from threading import Thread
 
+from energyplus_api_helpers.demos.helper import get_eplus_path_from_argv1
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
-
-eplus_path = '/eplus/installs/EnergyPlus-22-2-0'
-if len(argv) > 1:
-    eplus_path = argv[1]
 
 
 def thread_function(_working_dir: str):
@@ -17,7 +12,7 @@ def thread_function(_working_dir: str):
     )
 
 
-e = EPlusAPIHelper(Path(eplus_path))
+e = EPlusAPIHelper(get_eplus_path_from_argv1())
 api = e.get_api_instance()
 for index in range(3):
     working_dir = e.get_temp_run_dir()

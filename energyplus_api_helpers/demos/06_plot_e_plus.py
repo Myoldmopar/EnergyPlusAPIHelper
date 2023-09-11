@@ -1,7 +1,6 @@
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 
+from energyplus_api_helpers.demos.helper import get_eplus_path_from_argv1
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 
@@ -32,7 +31,7 @@ class PlotManager:
 
 class EnergyPlusManager:
     def __init__(self):
-        self.e = EPlusAPIHelper(Path("/eplus/installs/EnergyPlus-22-2-0"))
+        self.e = EPlusAPIHelper(get_eplus_path_from_argv1())
         self.api = self.e.get_api_instance()
         self.got_handles = False
         self.oa_temp_handle = -1
