@@ -55,12 +55,15 @@ class EPlusAPIHelper:
 
     def find_source_dir_from_cmake_cache(self) -> Path:
         cmake_cache_file = self.eplus_install_path.parent / "CMakeCache.txt"
+        if not cmake_cache_file.is_file():
+            raise ValueError("Cannot locate the CMakeCache.txt")
         lines = cmake_cache_file.read_text().split("\n")
         for line in lines:
             line_trimmed = line.strip()
             if line_trimmed.startswith("EnergyPlus_SOURCE_DIR:STATIC="):
                 found_dir = line_trimmed.split("=")[1]
                 return Path(found_dir)
+        raise ValueError(f"Could not locate the source directory in {cmake_cache_file}")
 
     def path_to_test_file(self, test_file_name: str) -> str:
         """Returns the path to an example/test file, trying to figure out if it is a build dir or install."""

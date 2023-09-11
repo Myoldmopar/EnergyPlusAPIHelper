@@ -18,8 +18,8 @@ oa_temp_actuator = -1
 oa_temp_handle = -1
 zone_temp_handle = -1
 count = 0
-outdoor_data = []
-zone_temp_data = []
+outdoor_data: list[dict[str, float]] = []
+zone_temp_data: list[dict[str, float]] = []
 
 
 @app.route("/", methods=["GET"])

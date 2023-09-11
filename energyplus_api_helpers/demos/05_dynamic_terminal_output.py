@@ -1,13 +1,14 @@
 import sys
 from pathlib import Path
 from sys import argv
+from typing import Optional
 
 import sparkline
 
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
-outdoor_db_handle = None
-plot_data = []
+outdoor_db_handle: Optional[int] = None
+plot_data: list[float] = []
 counter = 0
 
 eplus_path = "/eplus/installs/EnergyPlus-22-2-0"
