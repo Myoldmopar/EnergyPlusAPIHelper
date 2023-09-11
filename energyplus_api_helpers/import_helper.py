@@ -75,7 +75,9 @@ class EPlusAPIHelper:
             self.eplus_install_path = _infer_energyplus_install_dir()
             print(f"Infered Location of EnergyPlus installation at {self.eplus_install_path}")
         else:
-            if not (self.eplus_install_path / 'pyenergyplus').is_dir():
+            if not isinstance(eplus_install_path, Path):
+                eplus_install_path = Path(eplus_install_path)
+            if not (eplus_install_path / 'pyenergyplus').is_dir():
                 raise ValueError(f"Wrong eplus_install_path, '{eplus_install_path}/pyenergyplus' does not exist")
             self.eplus_install_path = eplus_install_path
 
