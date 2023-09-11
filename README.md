@@ -20,6 +20,15 @@ In this example, the helper class is constructed simply by pointing it to a vali
 The helper class is then used to get an EnergyPlus API instance, which is in turn used to create a new EnergyPlus "state".
 Finally, EnergyPlus is executed with some basic command line arguments passed into the `run_energyplus` function of the main EnergyPlus API.
 
+## Inferring EnergyPlus path
+
+It is possible to call `helper = EnergyPlusHelper()` (without a path argument), in which case the helper tries to locate your E+ installation directory.
+
+It does so checking, in order of preference:
+
+* Any `energyplus` executable in your `PATH`
+* By trying to locate the most recent EnergyPlus version installed in a default location
+
 ## Code Quality
 
 [![Flake8](https://github.com/Myoldmopar/EnergyPlusAPIDemos/actions/workflows/flake8.yml/badge.svg)](https://github.com/Myoldmopar/EnergyPlusAPIDemos/actions/workflows/flake8.yml)
