@@ -10,20 +10,20 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8  # v2
+    - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435  # v4.5.0
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
 
     - name: Install Pip Dependencies
       shell: bash
-      run: pip install -r requirements.txt
+      run: pip install -e .[dev]
 
     - name: Build the Wheel
       shell: bash
-      run: rm -rf dist/ build/ && python3 setup.py bdist_wheel sdist
+      run: rm -rf dist/ build/ && python3 -m build
 
     - name: Deploy on Test PyPi
       uses: pypa/gh-action-pypi-publish@37f50c210e3d2f9450da2cd423303d6a14a6e29f  # v1.5.1
