@@ -1,9 +1,10 @@
-from pathlib import Path
 import multiprocessing as mp
+from pathlib import Path
 from sys import argv
+
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
-eplus_path = '/eplus/installs/EnergyPlus-22-2-0'
+eplus_path = "/eplus/installs/EnergyPlus-22-2-0"
 if len(argv) > 1:
     eplus_path = argv[1]
 
@@ -15,14 +16,7 @@ def subprocess_function():
     print(f"Thread: Running at working dir: {working_dir}")
     state = api.state_manager.new_state()
     api.runtime.run_energyplus(
-        state, [
-            '-d',
-            working_dir,
-            '-a',
-            '-w',
-            e.weather_file_path(),
-            e.path_to_test_file('1ZoneUncontrolled.idf')
-        ]
+        state, ["-d", working_dir, "-a", "-w", e.weather_file_path(), e.path_to_test_file("1ZoneUncontrolled.idf")]
     )
 
 

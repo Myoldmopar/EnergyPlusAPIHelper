@@ -1,4 +1,5 @@
 import pathlib
+
 from setuptools import setup
 
 readme_file = pathlib.Path(__file__).parent.resolve() / 'README.md'
@@ -30,13 +31,17 @@ setup(
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Utilities',
     ],
-    platforms=[
-        'Linux (Tested on Ubuntu)', 'MacOSX', 'Windows'
-    ],
+    platforms=['Linux (Tested on Ubuntu)', 'MacOSX', 'Windows'],
     keywords=[
-        'energyplus_launch', 'ep_launch',
-        'EnergyPlus', 'eplus', 'Energy+',
-        'Building Simulation', 'Whole Building Energy Simulation',
-        'Heat Transfer', 'HVAC', 'Modeling',
-    ]
+        'energyplus_launch',
+        'ep_launch',
+        'EnergyPlus',
+        'eplus',
+        'Energy+',
+        'Building Simulation',
+        'Whole Building Energy Simulation',
+        'Heat Transfer',
+        'HVAC',
+        'Modeling',
+    ],
 )
