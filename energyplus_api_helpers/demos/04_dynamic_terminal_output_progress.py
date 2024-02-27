@@ -10,7 +10,7 @@ if len(argv) > 1:
 def progress_update(percent):
     filled_length = int(80 * (percent / 100.0))
     bar = "*" * filled_length + '-' * (80 - filled_length)
-    print(f'\rProgress: |{bar}| {percent}%', end="\r")
+    print(f'\rProgress: |{bar}| {percent}%', end="")
 
 
 e = EPlusAPIHelper(Path(eplus_path))
