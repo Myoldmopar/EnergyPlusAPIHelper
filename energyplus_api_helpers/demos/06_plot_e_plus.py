@@ -30,7 +30,9 @@ class PlotManager:
 
 class EnergyPlusManager:
     def __init__(self):
-        self.e = EPlusAPIHelper(Path('/eplus/installs/EnergyPlus-22-2-0'))
+        eplus_path = (Path(
+            __file__).resolve().parent / 'eplus_path.txt').read_text()  # '/eplus/installs/EnergyPlus-22-2-0'
+        self.e = EPlusAPIHelper(Path(eplus_path))
         self.api = self.e.get_api_instance()
         self.got_handles = False
         self.oa_temp_handle = -1

@@ -5,7 +5,8 @@ from time import sleep
 from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 app = Flask("EnergyPlus API Server Demo")
-e = EPlusAPIHelper(Path('/eplus/installs/EnergyPlus-22-2-0'))
+eplus_path = (Path(__file__).resolve().parent / 'eplus_path.txt').read_text()  # '/eplus/installs/EnergyPlus-22-2-0'
+e = EPlusAPIHelper(Path(eplus_path))
 api = e.get_api_instance()
 
 eplus_outdoor_temp = 23.3

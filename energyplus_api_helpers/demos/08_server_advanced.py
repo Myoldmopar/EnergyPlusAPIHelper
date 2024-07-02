@@ -7,7 +7,9 @@ from energyplus_api_helpers.import_helper import EPlusAPIHelper
 
 class RunConfig:
     def __init__(self):
-        self.e = EPlusAPIHelper(Path('/eplus/installs/EnergyPlus-22-2-0'))
+        eplus_path = (Path(
+            __file__).resolve().parent / 'eplus_path.txt').read_text()  # '/eplus/installs/EnergyPlus-22-2-0'
+        self.e = EPlusAPIHelper(Path(eplus_path))
         self.idf_name = '5ZoneAirCooled.idf'
         self.api = self.e.get_api_instance()
         self.eplus_outdoor_temp = 23.3
